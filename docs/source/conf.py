@@ -54,6 +54,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.extlinks",
     "mdanalysis_sphinx_theme",
+    "sphinxcontrib.bibtex",
 ]
 
 autosummary_generate = True
@@ -195,3 +196,6 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "mdanalysis": ("https://docs.mdanalysis.org/stable/", None),
 }
+
+bibtex_bibfiles = ["refs.bib"]
+bibtex_default_style = "unsrt"

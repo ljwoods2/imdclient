@@ -9,5 +9,6 @@ dependencies:
   - pip
 
   - mdanalysis-sphinx-theme >=1.0.1
+  - sphinxcontrib-bibtex
     # Pip-only installs
   #- pip:

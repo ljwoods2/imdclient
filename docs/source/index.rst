@@ -12,5 +12,4 @@ Welcome to IMDClient's documentation!
 
    getting_started
    api
-   protocol_current
-   protocol_proposed
+   protocol_v3

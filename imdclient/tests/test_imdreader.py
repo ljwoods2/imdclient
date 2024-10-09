@@ -635,3 +635,69 @@ class TestStreamIteration:
         with pytest.raises(ValueError):
             for ts in reader[1:3]:
                 pass
+
+# raise errors for incompatible methods
+class TestIMDReaderBaseAPIExceptions():
+
+    @pytest.fixture
+    def reader(self):
+        universe = mda.Universe(COORDINATES_TOPOLOGY, COORDINATES_H5MD)
+        imdsinfo = create_default_imdsinfo_v3()
+        port = get_free_port()
+        server = InThreadIMDServer(universe.trajectory)
+        server.set_imdsessioninfo(imdsinfo)
+        server.handshake_sequence("localhost", port, first_frame=True)
+
+        reader = IMDReader(
+            f"localhost:{port}", n_atoms=universe.trajectory.n_atoms
+        )
+        server.send_frames(1, 5)
+        yield reader
+        server.cleanup()
+
+    # test copy method
+    def test_copy_raises_notimplemented_error(self, reader):
+        with pytest.raises(NotImplementedError):
+            reader.copy()
+
+    # test _reopen method
+    def test_reopen_raises_runtime_error_on_second_call(self, reader):
+        # First call should be fine
+        reader._reopen()
+        # Second call should raise RuntimeError
+        with pytest.raises(RuntimeError):
+            reader._reopen()
+
+    # # test __getitem__ method
+    # def test_getitem_raises_runtime_error(self, reader):
+    #     with pytest.raises(RuntimeError):
+    #         reader[0]
+
+    # # Test check_slice_indices method
+    # def test_check_slice_indices_raises_value_error(self, reader):
+    #     # start is not None
+    #     with pytest.raises(ValueError):
+    #         reader.check_slice_indices(start=0, stop=None, step=None)
+    #     # stop is not None
+    #     with pytest.raises(ValueError):
+    #         reader.check_slice_indices(start=None, stop=10, step=None)
+    #     # step is not None and not 1
+    #     with pytest.raises(ValueError):
+    #         reader.check_slice_indices(start=None, stop=None, step=2)
+    #     # step is negative
+    #     with pytest.raises(ValueError):
+    #         reader.check_slice_indices(start=None, stop=None, step=-1)
+    #     # step is not an integer
+    #     with pytest.raises(ValueError):
+    #         reader.check_slice_indices(start=None, stop=None, step=1.5)
+
+    # Test __getstate__ method
+    def test_getstate_raises_notimplemented_error(self, reader):
+        with pytest.raises(NotImplementedError):
+            reader.__getstate__()
+
+    # Test __setstate__ method
+    def test_setstate_raises_notimplemented_error(self, reader):
+        with pytest.raises(NotImplementedError):
+            reader.__setstate__(None)
+ #move this class to IMDReader.py
